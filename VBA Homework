@@ -1,0 +1,80 @@
+Attribute VB_Name = "Module1"
+Sub tickers()
+
+    Dim tickers As String
+    Dim open_price As Double
+    open_price = 0
+    Dim close_price As Double
+    Dim summary As Integer
+    Dim vol As Double
+    vol = 0
+    Dim percent_change As Double
+    Dim year_change As Double
+    Dim ws As Worksheet
+    
+    Dim max_ticker As String
+    max_ticker = " "
+    Dim min_ticker As String
+    min_ticker = " "
+    Dim max_percent As Double
+    max_percent = 0
+    Dim min_percent As Double
+    min_percent = 0
+    Dim max_vol As Double
+    max_vol = 0
+       
+    For Each ws In Worksheets
+    
+    lastrow = ws.Cells(Rows.Count, 1).End(xlUp).Row
+    summary = 2
+       
+    ws.Cells(1, 9).Value = "Ticker"
+    ws.Cells(1, 10).Value = "Yearly Change"
+    ws.Cells(1, 11).Value = "Percent Change"
+    ws.Cells(1, 12).Value = "Total Stock Volume"
+    
+    open_price = ws.Cells(2, 3).Value
+     
+        For i = 2 To lastrow
+            
+            If ws.Cells(i + 1, 1).Value <> ws.Cells(i, 1).Value Then
+                
+                tickers = ws.Cells(i, 1).Value
+                close_price = ws.Cells(i, 6).Value
+                year_change = close_price - open_price
+                
+                If open_price <> 0 Then
+                    percent_change = (year_change / open_price)
+                End If
+                
+                vol = vol + ws.Cells(i, 7).Value
+                
+                ws.Cells(summary, 9).Value = tickers
+                ws.Cells(summary, 10).Value = year_change
+                ws.Cells(summary, 11).Value = percent_change
+                ws.Cells(summary, 12).Value = vol
+                
+                summary = summary + 1
+                
+                open_price = ws.Cells(i + 1, 3).Value
+                vol = 0
+                
+             Else
+                
+                vol = vol + ws.Cells(i, 7).Value
+                
+            End If
+                
+            
+            If (ws.Range("j" & summary).Value >= 0) Then
+                ws.Range("j" & summary).Interior.ColorIndex = 4
+            ElseIf (ws.Range("j" & summary).Value) Then
+                ws.Range("j" & summary).Interior.ColorIndex = 3
+            End If
+    
+                
+        Next i
+        
+Next ws
+
+End Sub
